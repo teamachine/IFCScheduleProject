@@ -592,11 +592,12 @@ points(schedprobb2[[25]]$value, col=gray(0.6), pch=19)
 points(schedprobb2[[50]]$value, col=gray(0.4), pch=19)
 points(schedprobb2[[75]]$value, col=gray(0.2), pch=19)
 points(schedprobb2[[100]]$value, col='black', pch=19)
+points(schedprobb2[[100]]$value[1:lengthpar,], col='red', pch=1)
 # Fit a smooth spline to the data (only pareto optimal solutions in final generation, sorted for aesthetics in order of time)
 fit <- smooth.spline(schedprobb2[[100]]$value[1:lengthpar,][order(schedprobb2[[100]]$value[1:lengthpar,][,1], decreasing = FALSE), ])
 # Add the smooth curve to the plot (lwd is the line width)
 lines(fit, col = "red", lwd = 2)
-legend(843, 2000000, legend=c('Gen1', 'Gen10', 'Gen50', 'Gen75', 'Gen100', 'FinalPareto'), pch=c(19, 19, 19, 19, 19,19), 
+legend(843, 2000000, legend=c('Gen1', 'Gen10', 'Gen50', 'Gen75', 'Gen100', 'FinalPareto'), pch=c(19, 19, 19, 19, 19,1), 
        col=c(gray(0.8), gray(0.7), gray(0.4), gray(0.2), 'black', 'red'))
 
 
