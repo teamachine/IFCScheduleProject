@@ -43,6 +43,7 @@ uniquelementdf <-data.frame(                   #generating case sensitive unique
 colnames(uniquelementdf)<-c("uniqueindex", "uniqueguid", "ifcelement", "vol")
 
 uniquelementdf <- uniquelementdf[!duplicated(uniquelementdf$uniqueindex), ]  #remove duplicates (by index) leaving uniques only
+
 # uniquelementdf <- uniquelementdf[!duplicated(uniquelementdf$uniqueguid), ]  #remove duplicates (by guid) leaving uniques only
 # #uniquelementdf <- uniquelementdf[order(uniquelementdf$uniqueguid), ]    #sort uniques in order
 # uniquelementdf
@@ -113,6 +114,7 @@ t
 
 funct<-function(x){
   chrom <- as.data.frame(round(matrix(x,nrow=(length(uniquelementdf[,1])),ncol=(length(t[,1])))))
+  chromunrp<-chrom   #unrepaired chromosome
   # print(chrom)
   # errorchrom<<-chrom
   # chrom<-as.data.frame(matrix (rep(sample(elemlistindex,length(uniquelementdf$elemindex),replace=FALSE),length(t[,1]))),
@@ -535,9 +537,25 @@ funct<-function(x){
   }
   Xcost<-sum(costvec)
   
+  #print data for each solution to xlsx
+  
+  fctr=7  #literally any number that you can divide built by to make it look nice on a df for xslx viewing purposes
+  builtdf<-data.frame(matrix(built, ncol=fctr, nrow = noelem/fctr, byrow = TRUE))
+  #write_xlsx(builtdf, "C:\\Users\\melod\\Documents\\School\\BIM A+ 2023\\BIM A+ 7\\BIM A+ 7 Thesis\\IFCProblem\\IFCScheduleProject\\PaperXls\\schedpar27gen100.xlsx")
+  colnames(chromunrp)<-c("Team1","Team2","Team3","Team4","Team5")
+  colnames(chrom)<-c("Team1","Team2","Team3","Team4","Team5")
+  colnames(eltime)<-c("Team1","Team2","Team3","Team4","Team5")
+  sheets <- list("Cost-Time" = cbind(as.data.frame(Xcost), as.data.frame(Xtime)), 
+                 "Schedule" = builtdf, "Chrom-Unrp" = chromunrp,   "Chrom-Final" = chrom, "ElementTime" = eltime ) 
+  write_xlsx(sheets, "C:\\Users\\melod\\Documents\\School\\BIM A+ 2023\\BIM A+ 7\\BIM A+ 7 Thesis\\IFCProblem\\IFCScheduleProject\\PaperXls\\schedpar27gen100.xlsx")
+  
   return(rbind(Xtime,Xcost))
+  
 }
 
+funct(schedproblem[[100]]$par[27,])
+
+#write_xlsx(as.data.frame(funct(schedproblem[[100]]$par[1,])), "C:\\Users\\melod\\Documents\\School\\BIM A+ 2023\\BIM A+ 7\\BIM A+ 7 Thesis\\IFCProblem\\IFCScheduleProject\\PaperXls\\schedpar1gen100.xlsx")
 # built
 # eltime
 # remaining
@@ -552,12 +570,48 @@ noelem<-as.numeric(length(uniquelementdf[,1]))
 nogenes<-as.numeric((length(uniquelementdf[,1]))* length(t[,1]))
 
 runtime1 <- proc.time()
-schedprobb=nsga2(funct,nogenes,2,#constraints=constrX, cdim=2,
+schedproblem=nsga2(funct,nogenes,2,#constraints=constrX, cdim=2,
                 lower.bounds = c(rep(0,nogenes)),
                 upper.bounds = c(rep(noelem,nogenes)),
-                popsize = 4, generations = 1:3,vectorized=FALSE)
+                popsize = 100, generations = 1:100,vectorized=FALSE)
 runtime2<- proc.time()-runtime1
-plot(schedprob, xlab="Xtime", ylab="Xcost")
+plot(schedproblem, xlab="Time", ylab="Cost")
+
+schedproblemruntime<-runtime2
+
+schedprobb2<-schedproblem
+
+#Plotting a bunch of generations
+
+#schedprobb2[[1]]
+#plot(schedprobb2[[1]]$value, schedprobb2[[100]]$value, xlab="Time", ylab="Cost", xlim=c(825,855), ylim=c(1350000,2100000) )
+plot(schedprobb2[[1]]$value, col= gray(0.8) , pch = 19, xlab="Time", ylab="Cost", xlim=c(829,853), ylim=c(1350000,2100000), frame.plot = TRUE )
+points(schedprobb2[[5]]$value, col=gray(0.75), pch=19)
+points(schedprobb2[[10]]$value, col=gray(0.7), pch=19)
+points(schedprobb2[[25]]$value, col=gray(0.6), pch=19)
+points(schedprobb2[[50]]$value, col=gray(0.4), pch=19)
+points(schedprobb2[[75]]$value, col=gray(0.2), pch=19)
+points(schedprobb2[[100]]$value, col='black', pch=19)
+# Fit a smooth spline to the data (only pareto optimal solutions in final generation, sorted for aesthetics in order of time)
+fit <- smooth.spline(schedprobb2[[100]]$value[1:lengthpar,][order(schedprobb2[[100]]$value[1:lengthpar,][,1], decreasing = FALSE), ])
+# Add the smooth curve to the plot (lwd is the line width)
+lines(fit, col = "red", lwd = 2)
+legend(843, 2000000, legend=c('Gen1', 'Gen10', 'Gen50', 'Gen75', 'Gen100', 'FinalPareto'), pch=c(19, 19, 19, 19, 19,19), 
+       col=c(gray(0.8), gray(0.7), gray(0.4), gray(0.2), 'black', 'red'))
+
+
+
+# lines(schedprobb2[[100]]$value[1:lengthpar,][order(schedprobb2[[100]]$value[1:lengthpar,][,1], decreasing = FALSE), ], col='red', lwd = 2)
+# 
+# schedprobb2[[100]]$pareto.optimal
+# 
+# lengthpar<-length(schedprobb2[[100]]$pareto.optimal[schedprobb2[[100]]$pareto.optimal > 0])
+
+#only pareto optimal solutions
+#schedprobb2[[100]]$value[1:lengthpar,][,1]
+
+#ordered df
+#schedprobb2[[100]]$value[1:lengthpar,][order(schedprobb2[[100]]$value[1:lengthpar,][,1], decreasing = FALSE), ]
 
 #new error Error in ov[, 1] : incorrect number of dimensions
 
@@ -570,3 +624,30 @@ plot(schedprob, xlab="Xtime", ylab="Xcost")
 # as.data.frame(schedprob_demanual52425$value)
 # write_xlsx(as.data.frame(schedprob_demanual52425$value),
 #            "D:\\BIM A+ 2023\\BIM A+ 7\\BIM A+ 7 Thesis\\IFCProblem\\IFCScheduleProject\\debug7.xlsx")
+#write_xlsx(as.data.frame(funct(schedproblem[[100]]$par[1,])), "C:\\Users\\melod\\Documents\\School\\BIM A+ 2023\\BIM A+ 7\\BIM A+ 7 Thesis\\IFCProblem\\IFCScheduleProject\\PaperXls\\schedpar1gen100.xlsx")
+# library(writexl)
+# sheets <- list("sheet1Name" = sheet1, "sheet2Name" = sheet2) #assume sheet1 and sheet2 are data frames
+# write_xlsx(sheets, "path/to/location")
+
+# vv
+# as.data.frame.vector(vv)
+# fctr=7
+# vdf<-data.frame(matrix(ncol=fctr, nrow = noelem/fctr))
+# vdf
+# vv<-c(1:noelem)
+# vv
+# vdf<-data.frame(matrix(vv, ncol=fctr, nrow = noelem/fctr, byrow = TRUE))
+
+
+data = data.frame(
+  rollno = c(1, 5, 4, 2, 3),
+  subjects = c("java", "python", "php", "sql", "c"))
+
+print(data)
+
+print("sort the data in decreasing order based on subjects ")
+print(data[order(data$subjects, decreasing = TRUE), ]   )
+
+
+print("sort the data in decreasing order based on rollno ")
+print(data[order(data$rollno, decreasing = FALSE), ]   )
