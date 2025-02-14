@@ -108,13 +108,13 @@ noelem<-length(uniquelementdf[,1])
 # )
 # t
 
-t<- as.data.frame(read_xlsx("teams.xlsx", sheet = "demoteams3"))
-row.names(t)<-c("A", "B", "C","D","E")
+t<- as.data.frame(read_xlsx("teams.xlsx", sheet = "demoteams4"))
+row.names(t)<-c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J")
 t
 
 funct<-function(x){
   chrom <- as.data.frame(round(matrix(x,nrow=(length(uniquelementdf[,1])),ncol=(length(t[,1])))))
-  chromunrp<-chrom   #unrepaired chromosome
+  chromunrp2<-chrom   #unrepaired chromosome
   # print(chrom)
   # errorchrom<<-chrom
   # chrom<-as.data.frame(matrix (rep(sample(elemlistindex,length(uniquelementdf$elemindex),replace=FALSE),length(t[,1]))),
@@ -538,22 +538,22 @@ funct<-function(x){
   Xcost<-sum(costvec)
   
   #print data for each solution to xlsx
-  
+  print(chrom)
   fctr=7  #literally any number that you can divide built by to make it look nice on a df for xslx viewing purposes
   builtdf<-data.frame(matrix(built, ncol=fctr, nrow = noelem/fctr, byrow = TRUE))
   #write_xlsx(builtdf, "C:\\Users\\melod\\Documents\\School\\BIM A+ 2023\\BIM A+ 7\\BIM A+ 7 Thesis\\IFCProblem\\IFCScheduleProject\\PaperXls\\schedpar27gen100.xlsx")
-  colnames(chromunrp)<-c("Team1","Team2","Team3","Team4","Team5")
-  colnames(chrom)<-c("Team1","Team2","Team3","Team4","Team5")
-  colnames(eltime)<-c("Team1","Team2","Team3","Team4","Team5")
-  sheets <- list("Cost-Time" = cbind(as.data.frame(Xcost), as.data.frame(Xtime)), 
-                 "Schedule" = builtdf, "Chrom-Unrp" = chromunrp,   "Chrom-Final" = chrom, "ElementTime" = eltime ) 
-  write_xlsx(sheets, "C:\\Users\\melod\\Documents\\School\\BIM A+ 2023\\BIM A+ 7\\BIM A+ 7 Thesis\\IFCProblem\\IFCScheduleProject\\PaperXls\\schedpar27gen100.xlsx")
+  colnames(chromunrp2)<-c("Team1","Team2","Team3","Team4","Team5","Team6","Team7","Team8","Team9","Team10")
+  colnames(chrom)<-c("Team1","Team2","Team3","Team4","Team5","Team6","Team7","Team8","Team9","Team10")
+  colnames(eltime)<-c("Team1","Team2","Team3","Team4","Team5","Team6","Team7","Team8","Team9","Team10")
+  sheets <- list("Cost-Time" = cbind(as.data.frame(Xcost), as.data.frame(Xtime)),
+                 "Schedule" = builtdf, "Chrom-Unrp" = chromunrp2,   "Chrom-Final" = chrom, "ElementTime" = eltime )
+  write_xlsx(sheets, "C:\\Users\\melod\\Documents\\School\\BIM A+ 2023\\BIM A+ 7\\BIM A+ 7 Thesis\\IFCProblem\\IFCScheduleProject\\PaperXls\\10schedpar14gen100.xlsx")
   
   return(rbind(Xtime,Xcost))
   
 }
 
-funct(schedproblem[[100]]$par[27,])
+#funct(schedproblem[[100]]$par[27,])
 
 #write_xlsx(as.data.frame(funct(schedproblem[[100]]$par[1,])), "C:\\Users\\melod\\Documents\\School\\BIM A+ 2023\\BIM A+ 7\\BIM A+ 7 Thesis\\IFCProblem\\IFCScheduleProject\\PaperXls\\schedpar1gen100.xlsx")
 # built
@@ -570,34 +570,38 @@ noelem<-as.numeric(length(uniquelementdf[,1]))
 nogenes<-as.numeric((length(uniquelementdf[,1]))* length(t[,1]))
 
 runtime1 <- proc.time()
-schedproblem=nsga2(funct,nogenes,2,#constraints=constrX, cdim=2,
+schedproblem2=nsga2(funct,nogenes,2,#constraints=constrX, cdim=2,
                 lower.bounds = c(rep(0,nogenes)),
                 upper.bounds = c(rep(noelem,nogenes)),
                 popsize = 100, generations = 1:100,vectorized=FALSE)
 runtime2<- proc.time()-runtime1
-plot(schedproblem, xlab="Time", ylab="Cost")
+schedproblem2runtime<-runtime2
+plot(schedproblem2, xlab="Time", ylab="Cost")
 
-schedproblemruntime<-runtime2
 
-schedprobb2<-schedproblem
+#schedproblemruntime<-runtime2
+
+schedprobb3<-schedproblem2
 
 #Plotting a bunch of generations
 
+lengthpar<-length(schedprobb3[[100]]$pareto.optimal[schedprobb3[[100]]$pareto.optimal > 0])
 #schedprobb2[[1]]
 #plot(schedprobb2[[1]]$value, schedprobb2[[100]]$value, xlab="Time", ylab="Cost", xlim=c(825,855), ylim=c(1350000,2100000) )
-plot(schedprobb2[[1]]$value, col= gray(0.8) , pch = 19, xlab="Time", ylab="Cost", xlim=c(829,853), ylim=c(1350000,2100000), frame.plot = TRUE )
-points(schedprobb2[[5]]$value, col=gray(0.75), pch=19)
-points(schedprobb2[[10]]$value, col=gray(0.7), pch=19)
-points(schedprobb2[[25]]$value, col=gray(0.6), pch=19)
-points(schedprobb2[[50]]$value, col=gray(0.4), pch=19)
-points(schedprobb2[[75]]$value, col=gray(0.2), pch=19)
-points(schedprobb2[[100]]$value, col='black', pch=19)
-points(schedprobb2[[100]]$value[1:lengthpar,], col='red', pch=1)
+#plot(schedprobb3[[1]]$value, col= gray(0.8) , pch = 19, xlab="Time", ylab="Cost", xlim=c(829,853), ylim=c(1350000,2100000), frame.plot = TRUE )
+plot(schedprobb3[[1]]$value, col= gray(0.8) , pch = 19, xlab="Time", ylab="Cost", xlim=c(827,843), ylim=c(1599000,2400000), frame.plot = TRUE )
+points(schedprobb3[[5]]$value, col=gray(0.75), pch=19)
+points(schedprobb3[[10]]$value, col=gray(0.7), pch=19)
+points(schedprobb3[[25]]$value, col=gray(0.6), pch=19)
+points(schedprobb3[[50]]$value, col=gray(0.4), pch=19)
+points(schedprobb3[[75]]$value, col=gray(0.2), pch=19)
+points(schedprobb3[[100]]$value, col='black', pch=19)
+points(schedprobb3[[100]]$value[1:lengthpar,], col='red', pch=1)
 # Fit a smooth spline to the data (only pareto optimal solutions in final generation, sorted for aesthetics in order of time)
-fit <- smooth.spline(schedprobb2[[100]]$value[1:lengthpar,][order(schedprobb2[[100]]$value[1:lengthpar,][,1], decreasing = FALSE), ])
+fit <- smooth.spline(schedprobb3[[100]]$value[1:lengthpar,][order(schedprobb3[[100]]$value[1:lengthpar,][,1], decreasing = FALSE), ])
 # Add the smooth curve to the plot (lwd is the line width)
 lines(fit, col = "red", lwd = 2)
-legend(843, 2000000, legend=c('Gen1', 'Gen10', 'Gen50', 'Gen75', 'Gen100', 'FinalPareto'), pch=c(19, 19, 19, 19, 19,1), 
+legend(835, 2400000, legend=c('Gen1', 'Gen10', 'Gen50', 'Gen75', 'Gen100', 'FinalPareto'), pch=c(19, 19, 19, 19, 19,1), 
        col=c(gray(0.8), gray(0.7), gray(0.4), gray(0.2), 'black', 'red'))
 
 
@@ -640,15 +644,20 @@ legend(843, 2000000, legend=c('Gen1', 'Gen10', 'Gen50', 'Gen75', 'Gen100', 'Fina
 # vdf<-data.frame(matrix(vv, ncol=fctr, nrow = noelem/fctr, byrow = TRUE))
 
 
-data = data.frame(
-  rollno = c(1, 5, 4, 2, 3),
-  subjects = c("java", "python", "php", "sql", "c"))
+# data = data.frame(
+#   rollno = c(1, 5, 4, 2, 3),
+#   subjects = c("java", "python", "php", "sql", "c"))
+# 
+# print(data)
+# 
+# print("sort the data in decreasing order based on subjects ")
+# print(data[order(data$subjects, decreasing = TRUE), ]   )
+# 
+# 
+# print("sort the data in decreasing order based on rollno ")
+# print(data[order(data$rollno, decreasing = FALSE), ]   )
 
-print(data)
 
-print("sort the data in decreasing order based on subjects ")
-print(data[order(data$subjects, decreasing = TRUE), ]   )
-
-
-print("sort the data in decreasing order based on rollno ")
-print(data[order(data$rollno, decreasing = FALSE), ]   )
+# schedproblemruntime 
+# user   system  elapsed 
+# 44419.17   194.71 44854.43
