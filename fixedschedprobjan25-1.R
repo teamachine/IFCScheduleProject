@@ -581,15 +581,15 @@ plot(schedproblem2, xlab="Time", ylab="Cost")
 
 #schedproblemruntime<-runtime2
 
-schedprobb3<-schedproblem2
+#schedprobb3<-schedproblem2
 
 #Plotting a bunch of generations
-
-lengthpar<-length(schedprobb3[[100]]$pareto.optimal[schedprobb3[[100]]$pareto.optimal > 0])
+#FOR 10-100-100
+lengthpar<-length(schedprobb3[[100]]$pareto.optimal[schedprobb3[[100]]$pareto.optimal > 0]) #length of only subsetted pareto optimals
 #schedprobb2[[1]]
 #plot(schedprobb2[[1]]$value, schedprobb2[[100]]$value, xlab="Time", ylab="Cost", xlim=c(825,855), ylim=c(1350000,2100000) )
 #plot(schedprobb3[[1]]$value, col= gray(0.8) , pch = 19, xlab="Time", ylab="Cost", xlim=c(829,853), ylim=c(1350000,2100000), frame.plot = TRUE )
-plot(schedprobb3[[1]]$value, col= gray(0.8) , pch = 19, xlab="Time", ylab="Cost", xlim=c(827,843), ylim=c(1599000,2400000), frame.plot = TRUE )
+plot(schedprobb3[[1]]$value, col= gray(0.8) , pch = 19, xlab="Time", ylab="Cost", xlim=c(827,844), ylim=c(1599000,2400000), frame.plot = TRUE )
 points(schedprobb3[[5]]$value, col=gray(0.75), pch=19)
 points(schedprobb3[[10]]$value, col=gray(0.7), pch=19)
 points(schedprobb3[[25]]$value, col=gray(0.6), pch=19)
@@ -597,14 +597,34 @@ points(schedprobb3[[50]]$value, col=gray(0.4), pch=19)
 points(schedprobb3[[75]]$value, col=gray(0.2), pch=19)
 points(schedprobb3[[100]]$value, col='black', pch=19)
 points(schedprobb3[[100]]$value[1:lengthpar,], col='red', pch=1)
+
 # Fit a smooth spline to the data (only pareto optimal solutions in final generation, sorted for aesthetics in order of time)
-fit <- smooth.spline(schedprobb3[[100]]$value[1:lengthpar,][order(schedprobb3[[100]]$value[1:lengthpar,][,1], decreasing = FALSE), ])
+#fit <- smooth.spline(schedprobb3[[100]]$value[1:lengthpar,][order(schedprobb3[[100]]$value[1:lengthpar,][,1], decreasing = FALSE), ])
+#fit <- line(schedprobb3[[100]]$value[1:lengthpar,][order(schedprobb3[[100]]$value[1:lengthpar,][,1], decreasing = FALSE), ])
+parlines<-(schedprobb3[[100]]$value[1:lengthpar,][order(schedprobb3[[100]]$value[1:lengthpar,][,1], decreasing = FALSE), ])
 # Add the smooth curve to the plot (lwd is the line width)
-lines(fit, col = "red", lwd = 2)
-legend(835, 2400000, legend=c('Gen1', 'Gen10', 'Gen50', 'Gen75', 'Gen100', 'FinalPareto'), pch=c(19, 19, 19, 19, 19,1), 
+lines(parlines, col = "red", lwd = 2)
+legend(837, 2410000, legend=c('Gen1', 'Gen10', 'Gen50', 'Gen75', 'Gen100', 'FinalPareto'), pch=c(19, 19, 19, 19, 19,1), 
        col=c(gray(0.8), gray(0.7), gray(0.4), gray(0.2), 'black', 'red'))
 
 
+
+#FOR 5-100-100
+lengthparr<-length(schedprobb2[[100]]$pareto.optimal[schedprobb2[[100]]$pareto.optimal > 0])
+
+plot(schedprobb2[[1]]$value, col= gray(0.8) , pch = 19, xlab="Time", ylab="Cost", xlim=c(829,853), ylim=c(1350000,2100000), frame.plot = TRUE )
+points(schedprobb2[[5]]$value, col=gray(0.75), pch=19)
+points(schedprobb2[[10]]$value, col=gray(0.7), pch=19)
+points(schedprobb2[[25]]$value, col=gray(0.6), pch=19)
+points(schedprobb2[[50]]$value, col=gray(0.4), pch=19)
+points(schedprobb2[[75]]$value, col=gray(0.2), pch=19)
+points(schedprobb2[[100]]$value, col='black', pch=19)
+points(schedprobb2[[100]]$value[1:lengthpar,], col='red', pch=1)
+
+parliness<-(schedprobb2[[100]]$value[1:lengthparr,][order(schedprobb2[[100]]$value[1:lengthparr,][,1], decreasing = FALSE), ])
+lines(parliness, col = "red", lwd = 2)
+legend(843, 2100000, legend=c('Gen1', 'Gen10', 'Gen50', 'Gen75', 'Gen100', 'FinalPareto'), pch=c(19, 19, 19, 19, 19,1), 
+       col=c(gray(0.8), gray(0.7), gray(0.4), gray(0.2), 'black', 'red'))
 
 # lines(schedprobb2[[100]]$value[1:lengthpar,][order(schedprobb2[[100]]$value[1:lengthpar,][,1], decreasing = FALSE), ], col='red', lwd = 2)
 # 
