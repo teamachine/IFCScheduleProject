@@ -626,6 +626,24 @@ lines(parliness, col = "red", lwd = 2)
 legend(843, 2100000, legend=c('Gen1', 'Gen10', 'Gen50', 'Gen75', 'Gen100', 'FinalPareto'), pch=c(19, 19, 19, 19, 19,1), 
        col=c(gray(0.8), gray(0.7), gray(0.4), gray(0.2), 'black', 'red'))
 
+#for 5-100-100
+parlinessdf<-as.data.frame(parliness)
+colnames(parlinessdf)<-c("Time","Cost")
+#for 10-100-100
+parlinesdf<-as.data.frame(parlines)
+colnames(parlinesdf)<-c("Time","Cost")
+
+sheets1 <- list("Pareto-5-100-100" = parlinessdf, "Pareto-10-100-100" = parlinesdf)
+write_xlsx(sheets1, "C:\\Users\\melod\\Documents\\School\\BIM A+ 2023\\BIM A+ 7\\BIM A+ 7 Thesis\\IFCProblem\\IFCScheduleProject\\PaperXls\\FinalParetoCostsTimes.xlsx")
+
+
+
+
+
+write_xlsx(uniquelementdf, "C:\\Users\\melod\\Documents\\School\\BIM A+ 2023\\BIM A+ 7\\BIM A+ 7 Thesis\\IFCProblem\\IFCScheduleProject\\PaperXls\\Schedule27withGUIDs-5-100-100.xlsx")
+
+
+
 # lines(schedprobb2[[100]]$value[1:lengthpar,][order(schedprobb2[[100]]$value[1:lengthpar,][,1], decreasing = FALSE), ], col='red', lwd = 2)
 # 
 # schedprobb2[[100]]$pareto.optimal
